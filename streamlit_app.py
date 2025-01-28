@@ -1,17 +1,13 @@
-try:
-    import streamlit as st
-    from pytube import YouTube
-    import os
-except ModuleNotFoundError as e:
-    print("Error: A required package is not installed. Make sure 'streamlit' and 'pytube' are installed in your environment.")
-    raise e
+import streamlit as st
+from pytube import YouTube
+import os
 
 def on_progress(stream, chunk, bytes_remaining):
     total_size = stream.filesize
     bytes_downloaded = total_size - bytes_remaining
     percentage_of_completion = bytes_downloaded / total_size * 100
-    st.session_state.progress_bar.progress(percentage_of_completion / 100)
-    st.session_state.status_text.text(f"{int(percentage_of_completion)}% abgeschlossen")
+    per = int(percentage_of_completion)
+    return per
 
 def startDownload(ytLink, download_type):
     try:
@@ -24,15 +20,22 @@ def startDownload(ytLink, download_type):
         # Zeige den Titel des Videos an
         st.write(f"Titel: {ytObject.title}")
 
-        # Fortschrittsbalken initialisieren
-        st.session_state.progress_bar = st.progress(0)
-        st.session_state.status_text = st.empty()
+        # Fortschrittsbalken
+        progress_bar = st.progress(0)
+        status_text = st.empty()
 
         # Download starten
         file_path = stream.download()
 
+        # Fortschritt aktualisieren
+        while True:
+            progress = on_progress(stream, None, stream.filesize)
+            progress_bar.progress(progress / 100)
+            status_text.text(f"{progress}% abgeschlossen")
+            if progress == 100:
+                break
+
         # Erfolgsmeldung
-        st.session_state.progress_bar.progress(1.0)
         st.success(f"Download abgeschlossen! Die Datei wurde gespeichert als: {os.path.basename(file_path)}")
 
     except Exception as e:
@@ -58,4 +61,4 @@ if st.button("Download starten"):
 
 # Autor Information
 st.markdown("---")
-st.text("cconverted Fox 2025 - V. 1.0 (Streamlit Version)")
+st.text("N. Batke 2024 - V. 1.0 (Streamlit Version)")
