@@ -61,4 +61,4 @@ if st.button("Download starten"):
 
 # Autor Information
 st.markdown("---")
-st.text("N. Batke 2024 - V. 1.0 (Streamlit Version)")
+st.text("ConvertedFox 2024 - V. 1.0 (Streamlit Version)")
